@@ -238,7 +238,6 @@ public class TriggerHandlerTest {
     private class TestTriggerHandler extends TriggerHandler {
         public TestTriggerHandler() {
             super(
-                TRIGGER_HANDLER_NAME,
                 null,
                 new List<SObject>(),
                 new Map<Id, SObject>(),

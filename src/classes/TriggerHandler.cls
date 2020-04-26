@@ -1,24 +1,23 @@
 public virtual class TriggerHandler {
     @TestVisible
     private System.TriggerOperation triggerOperation;
-    private String triggerHandlerName;
     @TestVisible
     private TriggerHandlerMetadataProvider metadataProvider = new TriggerHandlerMetadataProvider();
+    private String triggerHandlerName;
 
-    protected TriggerHandler(String triggerHandlerName,
-                             System.TriggerOperation triggerOperation,
+    protected TriggerHandler(System.TriggerOperation triggerOperation,
                              List<SObject> newList,
                              Map<Id, SObject> newMap,
                              List<SObject> oldList,
                              Map<Id, SObject> oldMap,
                              Integer size) {
-        this.triggerHandlerName = triggerHandlerName;
         this.triggerOperation = triggerOperation;
         this.newList = newList;
         this.newMap = newMap;
         this.oldList = oldList;
         this.oldMap = oldMap;
         this.size = size;
+        this.triggerHandlerName = String.valueOf(this).substring(0, String.valueOf(this).indexOf(':'));
     }
 
     @testVisible
