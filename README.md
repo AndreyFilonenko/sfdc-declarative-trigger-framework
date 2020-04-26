@@ -1,9 +1,10 @@
 # Salesforce Apex trigger framework
 
 ## Overview
+A simple and minimal framework for Salesforce Apex triggers with declarative trigger handlers management - in accordance with Salesforce development best practices, defines a single entry point for sObject trigger with dispatching handler functions by a specific trigger event. Also gives an ability to manage trigger handlers with the no-code approach, just managing custom metadata descriptors via point and clicks.
 
 ## Usage
-
+First, create an Apex trigger for sObject:
 ```java  
 trigger AccountTrigger on Account (before insert,
                                    before update,
@@ -23,6 +24,7 @@ trigger AccountTrigger on Account (before insert,
 }
 ```
 
+Then, extend the base **TriggerHandler** class and create a trigger handler for your sObject:
 ```java
 public class AccountTriggerHandler extends TriggerHandler {
     public AccountTriggerHandler(System.TriggerOperation triggerOperation,
@@ -43,6 +45,7 @@ public class AccountTriggerHandler extends TriggerHandler {
 }
 ```
 
+Finally, define the handler with the next pattern:
 ```java
 public class AccountTriggerHandlerMethodBeforeInsert implements TriggerHandler.BeforeInsertHandlerMethod {
     public void execute(List<SObject> newList) {
@@ -50,6 +53,9 @@ public class AccountTriggerHandlerMethodBeforeInsert implements TriggerHandler.B
     }
 }
 ```
+
+... and register it in the Custom metadata by creating the correspondent **Trigger_Handler_Method__mdt** record:
+![image](https://user-images.githubusercontent.com/23140402/80317415-5a0ce100-880c-11ea-9cdb-7f5c4f6a8239.png)
 
 ## List of Interfaces
 #### TriggerHandler.BeforeInsertHandlerMethod
@@ -102,6 +108,7 @@ public interface AfterUndeleteHandlerMethod {
 ```
 
 ## List of TriggerHandler overridable methods
+Also, you can directly define all your logic in your sObject trigger handler just overriding the next methods
 
 * `beforeInsert()`
 * `beforeUpdate()`
@@ -110,6 +117,33 @@ public interface AfterUndeleteHandlerMethod {
 * `afterUpdate()`
 * `afterDelete()`
 * `afterUndelete()`
+
+But keep in mind - your method overrides must include base class method call, also your overriden functionality will be executed after all daclarative handler methods.
+```java
+public class AccountTriggerHandler extends TriggerHandler {
+    public AccountTriggerHandler(System.TriggerOperation triggerOperation,
+                                 List<Account> newList,
+                                 Map<Id, Account> newMap,
+                                 List<Account> oldList,
+                                 Map<Id, Account> oldMap,
+                                 Integer size) {
+        super(
+            triggerOperation,
+            newList,
+            newMap,
+            oldList,
+            oldMap,
+            size
+        );
+    }
+
+    public override void beforeInsert() {
+        super();
+
+        // put your overriden logic here...
+	}
+}
+```
 
 <a href="https://githubsfdeploy.herokuapp.com?owner=AndreyFilonenko&repo=sfdc-declarative-trigger-framework&ref=master">
   <img alt="Deploy to Salesforce"
