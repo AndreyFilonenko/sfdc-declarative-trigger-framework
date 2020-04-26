@@ -1,5 +1,10 @@
 # Salesforce Apex trigger framework
 
+<a href="https://githubsfdeploy.herokuapp.com?owner=AndreyFilonenko&repo=sfdc-declarative-trigger-framework&ref=master">
+  <img alt="Deploy to Salesforce"
+       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
+</a>
+
 ## Overview
 A simple and minimal framework for Salesforce Apex triggers with declarative trigger handlers management - in accordance with Salesforce development best practices, defines a single entry point for sObject trigger with dispatching handler functions by a specific trigger event. Also gives an ability to manage trigger handlers with the no-code approach, just managing custom metadata descriptors via point and clicks.
 
@@ -141,11 +146,9 @@ public class AccountTriggerHandler extends TriggerHandler {
         super();
 
         // put your overriden logic here...
-	}
+    }
 }
 ```
+## References
 
-<a href="https://githubsfdeploy.herokuapp.com?owner=AndreyFilonenko&repo=sfdc-declarative-trigger-framework&ref=master">
-  <img alt="Deploy to Salesforce"
-       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
-</a>
+The idea of this framework was based on the main concepts of [TDTM](https://powerofus.force.com/s/article/EDA-TDTM-Overview "TDTM Overview") framework and Kevin O'Hara`s [sfdc-trigger-framework](https://github.com/kevinohara80/sfdc-trigger-framework "sfdc-trigger-framework").
