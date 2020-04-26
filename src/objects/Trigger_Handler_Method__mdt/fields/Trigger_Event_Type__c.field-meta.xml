@@ -13,37 +13,37 @@
             <value>
                 <fullName>BEFORE_INSERT</fullName>
                 <default>true</default>
-                <label>BEFORE_INSERT</label>
+                <label>Before insert</label>
             </value>
             <value>
                 <fullName>AFTER_INSERT</fullName>
                 <default>false</default>
-                <label>AFTER_INSERT</label>
+                <label>After insert</label>
             </value>
             <value>
                 <fullName>BEFORE_UPDATE</fullName>
                 <default>false</default>
-                <label>BEFORE_UPDATE</label>
+                <label>Before update</label>
             </value>
             <value>
                 <fullName>AFTER_UPDATE</fullName>
                 <default>false</default>
-                <label>AFTER_UPDATE</label>
+                <label>After update</label>
             </value>
             <value>
                 <fullName>BEFORE_DELETE</fullName>
                 <default>false</default>
-                <label>BEFORE_DELETE</label>
+                <label>Before delete</label>
             </value>
             <value>
                 <fullName>AFTER_DELETE</fullName>
                 <default>false</default>
-                <label>AFTER_DELETE</label>
+                <label>After delete</label>
             </value>
             <value>
                 <fullName>AFTER_UNDELETE</fullName>
                 <default>false</default>
-                <label>AFTER_UNDELETE</label>
+                <label>After undelete</label>
             </value>
         </valueSetDefinition>
     </valueSet>
