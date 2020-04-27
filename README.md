@@ -8,6 +8,21 @@
 ## Overview
 A simple and minimal framework for Salesforce Apex triggers with declarative trigger handlers management - in accordance with Salesforce development best practices, defines a single entry point for sObject trigger with dispatching handler functions by a specific trigger event. Also gives an ability to manage trigger handlers with the no-code approach, just managing custom metadata descriptors via point and clicks.
 
+## *TriggerHandler* public API
+#### Properties:
+* `List<SObject> newList` - readonly, returns the Trigger.new records
+* `Map<Id, SObject> newMap` - readonly, returns the Trigger.newMap records
+* `List<SObject> oldList` - readonly, returns the Trigger.old records
+* `Map<Id, SObject> oldMap` - readonly, returns the Trigger.oldMap records
+* `Integer size` - readonly, returns the quantity of trigger records
+
+#### Exceptions
+* `TriggerHandlerException` - will be thrown in the next cases:
+    1. Call of the `newList` property on `Before Delete` or `After Delete` trigger events.
+    2. Call of the `newMap` property on `Before Insert`, `Before Delete` or `After Delete` trigger events.
+    3. Call of the `oldList` property on `Before Insert`, `After Insert` or `After Undelete` trigger events.
+    4. Call of the `oldMap` property on `Before Insert`, `After Insert` or `After Undelete` trigger events.
+
 ## Usage
 First, create an Apex trigger for sObject:
 ```java  
@@ -123,7 +138,7 @@ Also, you can directly define all your logic in your sObject trigger handler jus
 * `afterDelete()`
 * `afterUndelete()`
 
-But keep in mind - your method overrides must include base class method call, also your overriden functionality will be executed after all daclarative handler methods.
+But keep in mind - your method overrides must include base class method call, also your overriden functionality will be executed after all declarative handler methods.
 ```java
 public class AccountTriggerHandler extends TriggerHandler {
     public AccountTriggerHandler(System.TriggerOperation triggerOperation,
@@ -143,12 +158,11 @@ public class AccountTriggerHandler extends TriggerHandler {
     }
 
     public override void beforeInsert() {
-        super();
+        super.beforeInsert();
 
         // put your overriden logic here...
     }
 }
 ```
 ## References
-
 The idea of this framework was based on the main concepts of [TDTM](https://powerofus.force.com/s/article/EDA-TDTM-Overview "TDTM Overview") framework and Kevin O'Hara`s [sfdc-trigger-framework](https://github.com/kevinohara80/sfdc-trigger-framework "sfdc-trigger-framework").
