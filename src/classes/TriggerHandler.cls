@@ -103,11 +103,9 @@ public virtual class TriggerHandler {
     @TestVisible
     protected virtual void beforeInsert() {
         List<String> handlerMethodNames = getHandlerMethodNames();
-        System.debug(handlerMethodNames);
         
         if (!handlerMethodNames.isEmpty()) {
             for (Integer i = 0; i < handlerMethodNames.size(); i++) {
-                System.debug(handlerMethodNames[i]);
                 if (Type.forName(handlerMethodNames[i]) != null) {
                     Type t = Type.forName(handlerMethodNames[i]);
                     BeforeInsertHandlerMethod currentHandlerMethod = (BeforeInsertHandlerMethod)t.newInstance();
