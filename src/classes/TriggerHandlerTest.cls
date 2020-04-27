@@ -142,7 +142,7 @@ public class TriggerHandlerTest {
         handler.dispatch();
         Test.stopTest();
 
-        System.assertEquals('beforeInsert', lastMethodCalled);
+        System.assertEquals('beforeInsert3', lastMethodCalled);
     }
 
     @isTest
@@ -256,19 +256,59 @@ public class TriggerHandlerTest {
                                        List<String> listOfParamNames, 
                                        List<Object> listOfArgs) {
             System.TriggerOperation triggerOperation = (System.TriggerOperation)listOfArgs[1];
-            Trigger_Handler_Method__mdt testHandlerMethod = new Trigger_Handler_Method__mdt();
-            testHandlerMethod.DeveloperName = 'TriggerHandlerTest.' + TRIGGER_HANDLER_NAME + triggerOperation.name();
-            testHandlerMethod.Is_Enabled__c = true;
-            testHandlerMethod.Order_of_execution__c = 1;
-            testHandlerMethod.Trigger_Event_Type__c = triggerOperation.name();
-            testHandlerMethod.Trigger_Handler_Name__c = TRIGGER_HANDLER_NAME;
-            return new List<Trigger_Handler_Method__mdt> { testHandlerMethod };
+            List<Trigger_Handler_Method__mdt> testTriggerHandlerMethods = new List<Trigger_Handler_Method__mdt>();
+            if (triggerOperation == System.TriggerOperation.BEFORE_INSERT) {
+                Trigger_Handler_Method__mdt testHandlerMethod1 = new Trigger_Handler_Method__mdt();
+                testHandlerMethod1.DeveloperName = 'TriggerHandlerTest.' + TRIGGER_HANDLER_NAME + triggerOperation.name() + '2';
+                testHandlerMethod1.Is_Enabled__c = true;
+                testHandlerMethod1.Order_of_execution__c = 2;
+                testHandlerMethod1.Trigger_Event_Type__c = triggerOperation.name();
+                testHandlerMethod1.Trigger_Handler_Name__c = TRIGGER_HANDLER_NAME;
+                testTriggerHandlerMethods.add(testHandlerMethod1);
+
+                Trigger_Handler_Method__mdt testHandlerMethod2 = new Trigger_Handler_Method__mdt();
+                testHandlerMethod2.DeveloperName = 'TriggerHandlerTest.' + TRIGGER_HANDLER_NAME + triggerOperation.name() + '1';
+                testHandlerMethod2.Is_Enabled__c = true;
+                testHandlerMethod2.Order_of_execution__c = 1;
+                testHandlerMethod2.Trigger_Event_Type__c = triggerOperation.name();
+                testHandlerMethod2.Trigger_Handler_Name__c = TRIGGER_HANDLER_NAME;
+                testTriggerHandlerMethods.add(testHandlerMethod2);
+
+                Trigger_Handler_Method__mdt testHandlerMethod3 = new Trigger_Handler_Method__mdt();
+                testHandlerMethod3.DeveloperName = 'TriggerHandlerTest.' + TRIGGER_HANDLER_NAME + triggerOperation.name() + '3';
+                testHandlerMethod3.Is_Enabled__c = true;
+                testHandlerMethod3.Order_of_execution__c = 3;
+                testHandlerMethod3.Trigger_Event_Type__c = triggerOperation.name();
+                testHandlerMethod3.Trigger_Handler_Name__c = TRIGGER_HANDLER_NAME;
+                testTriggerHandlerMethods.add(testHandlerMethod3);
+            } else {                
+                Trigger_Handler_Method__mdt testHandlerMethod = new Trigger_Handler_Method__mdt();
+                testHandlerMethod.DeveloperName = 'TriggerHandlerTest.' + TRIGGER_HANDLER_NAME + triggerOperation.name();
+                testHandlerMethod.Is_Enabled__c = true;
+                testHandlerMethod.Order_of_execution__c = 1;
+                testHandlerMethod.Trigger_Event_Type__c = triggerOperation.name();
+                testHandlerMethod.Trigger_Handler_Name__c = TRIGGER_HANDLER_NAME;
+                testTriggerHandlerMethods.add(testHandlerMethod);
+            }
+            return testTriggerHandlerMethods;
         }
     }
 
-    public class TestTriggerHandlerBEFORE_INSERT implements TriggerHandler.BeforeInsertHandlerMethod {
+    public class TestTriggerHandlerBEFORE_INSERT1 implements TriggerHandler.BeforeInsertHandlerMethod {
         public void execute(List<SObject> newList) {
-            TriggerHandlerTest.lastMethodCalled = 'beforeInsert';
+            TriggerHandlerTest.lastMethodCalled = 'beforeInsert1';
+        }
+    }
+    
+    public class TestTriggerHandlerBEFORE_INSERT2 implements TriggerHandler.BeforeInsertHandlerMethod {
+        public void execute(List<SObject> newList) {
+            TriggerHandlerTest.lastMethodCalled = 'beforeInsert2';
+        }
+    }
+    
+    public class TestTriggerHandlerBEFORE_INSERT3 implements TriggerHandler.BeforeInsertHandlerMethod {
+        public void execute(List<SObject> newList) {
+            TriggerHandlerTest.lastMethodCalled = 'beforeInsert3';
         }
     }
 

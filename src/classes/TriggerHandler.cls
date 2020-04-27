@@ -103,9 +103,11 @@ public virtual class TriggerHandler {
     @TestVisible
     protected virtual void beforeInsert() {
         List<String> handlerMethodNames = getHandlerMethodNames();
+        System.debug(handlerMethodNames);
         
         if (!handlerMethodNames.isEmpty()) {
             for (Integer i = 0; i < handlerMethodNames.size(); i++) {
+                System.debug(handlerMethodNames[i]);
                 if (Type.forName(handlerMethodNames[i]) != null) {
                     Type t = Type.forName(handlerMethodNames[i]);
                     BeforeInsertHandlerMethod currentHandlerMethod = (BeforeInsertHandlerMethod)t.newInstance();
@@ -207,10 +209,19 @@ public virtual class TriggerHandler {
 
     private List<String> getHandlerMethodNames() {
         List<Trigger_Handler_Method__mdt> handlerMethods = this.metadataProvider.getHandlerMethods(this.triggerHandlerName, this.triggerOperation);
+        List<TriggerHandlerMethodWrapper> handlerMethodWrappers = new List<TriggerHandlerMethodWrapper>();
+        for (Trigger_Handler_Method__mdt handlerMethod : handlerMethods) {
+            handlerMethodWrappers.add(new TriggerHandlerMethodWrapper(
+                handlerMethod.DeveloperName,
+                handlerMethod.Order_of_execution__c
+            ));
+        }
+
+        handlerMethodWrappers.sort();
 
         List<String> handlerMethodNames = new List<String>();
-        for (Integer i = 0; i < handlerMethods.size(); i++) {
-            handlerMethodNames.add(handlerMethods[i].DeveloperName);
+        for (Integer i = 0; i < handlerMethodWrappers.size(); i++) {
+            handlerMethodNames.add(handlerMethodWrappers[i].handlerMethodName);
         }
         
         return handlerMethodNames;
@@ -244,5 +255,27 @@ public virtual class TriggerHandler {
 
     public interface AfterUndeleteHandlerMethod {
         void execute(List<SObject> newList);
+    }
+
+    private class TriggerHandlerMethodWrapper implements Comparable {
+        TriggerHandlerMethodWrapper(String handlerMethodName, Decimal executionOrder) {
+            this.handlerMethodName = handlerMethodName;
+            this.executionOrder = Integer.valueOf(executionOrder);
+        }
+
+        public String handlerMethodName { get; private set; }
+        public Integer executionOrder { get; private set; }
+
+        public Integer compareTo(Object compareTo) {
+            TriggerHandlerMethodWrapper compareToMethodWrapper = (TriggerHandlerMethodWrapper)compareTo;
+            Integer returnValue = 0;
+            if (executionOrder > compareToMethodWrapper.executionOrder) {
+                returnValue = 1;
+            } else if (executionOrder < compareToMethodWrapper.executionOrder) {
+                returnValue = -1;
+            }
+            
+            return returnValue;
+        }
     }
 }
