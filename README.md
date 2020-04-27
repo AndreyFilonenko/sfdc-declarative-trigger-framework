@@ -32,7 +32,7 @@ public class AccountTriggerHandlerMethod_2 implements TriggerHandler.BeforeInser
 public class AccountTriggerHandlerMethod_3 implements TriggerHandler.BeforeInsertHandlerMethod {
     public void execute(List<SObject> newList) {
         List<Account> accounts = (List<Account>)newList;
-        System.debug('AccountTriggerHandlerMethod_3 class executed! ' + accounts.size() + ' records passed. - Should be the first method called');
+        System.debug('AccountTriggerHandlerMethod_3 class executed! ' + accounts.size() + ' records passed. - Should be the last method called (before all overrides)');
     }
 }
 
@@ -62,3 +62,5 @@ insert acc;
 
 5. The results are below:
 ![image](https://user-images.githubusercontent.com/23140402/80420104-ec7fb400-88e2-11ea-8cf2-a99bfa2bc53b.png)
+
+#### All needed classes and example handlers are included in this branch and can be used for other tests.
