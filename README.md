@@ -77,6 +77,8 @@ public class AccountTriggerHandlerMethodBeforeInsert implements TriggerHandler.B
 ... and register it in the Custom metadata by creating the correspondent **Trigger_Handler_Method__mdt** record:
 ![image](https://user-images.githubusercontent.com/23140402/80317415-5a0ce100-880c-11ea-9cdb-7f5c4f6a8239.png)
 
+#### See the detailed example of the usage [here!](https://github.com/AndreyFilonenko/sfdc-declarative-trigger-framework/tree/example-of-usage)
+
 ## List of Interfaces
 #### TriggerHandler.BeforeInsertHandlerMethod
 ```java
