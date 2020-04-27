@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Trigger_Event_Type__c</fullName>
+    <externalId>false</externalId>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <label>Trigger Event Type</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>BEFORE_INSERT</fullName>
+                <default>true</default>
+                <label>Before insert</label>
+            </value>
+            <value>
+                <fullName>AFTER_INSERT</fullName>
+                <default>false</default>
+                <label>After insert</label>
+            </value>
+            <value>
+                <fullName>BEFORE_UPDATE</fullName>
+                <default>false</default>
+                <label>Before update</label>
+            </value>
+            <value>
+                <fullName>AFTER_UPDATE</fullName>
+                <default>false</default>
+                <label>After update</label>
+            </value>
+            <value>
+                <fullName>BEFORE_DELETE</fullName>
+                <default>false</default>
+                <label>Before delete</label>
+            </value>
+            <value>
+                <fullName>AFTER_DELETE</fullName>
+                <default>false</default>
+                <label>After delete</label>
+            </value>
+            <value>
+                <fullName>AFTER_UNDELETE</fullName>
+                <default>false</default>
+                <label>After undelete</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
