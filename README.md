@@ -1,5 +1,7 @@
 # Salesforce Apex trigger framework
 
+[![Build Status](https://travis-ci.org/AndreyFilonenko/sfdc-declarative-trigger-framework.svg?branch=master)](https://travis-ci.org/AndreyFilonenko/sfdc-declarative-trigger-framework)
+
 <a href="https://githubsfdeploy.herokuapp.com?owner=AndreyFilonenko&repo=sfdc-declarative-trigger-framework&ref=master">
   <img alt="Deploy to Salesforce"
        src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
