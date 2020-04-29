@@ -10,11 +10,11 @@ A simple and minimal framework for Salesforce Apex triggers with declarative tri
 
 ## *TriggerHandler* public API
 #### Properties:
-* `List<SObject> newList` - readonly, returns the Trigger.new records
-* `Map<Id, SObject> newMap` - readonly, returns the Trigger.newMap records
-* `List<SObject> oldList` - readonly, returns the Trigger.old records
-* `Map<Id, SObject> oldMap` - readonly, returns the Trigger.oldMap records
-* `Integer size` - readonly, returns the quantity of trigger records
+* `List<SObject> newList` - readonly, returns the Trigger.new records.
+* `Map<Id, SObject> newMap` - readonly, returns the Trigger.newMap records.
+* `List<SObject> oldList` - readonly, returns the Trigger.old records.
+* `Map<Id, SObject> oldMap` - readonly, returns the Trigger.oldMap records.
+* `Integer size` - readonly, returns the quantity of trigger records.
 
 #### Exceptions
 * `TriggerHandlerException` - will be thrown in the next cases:
@@ -130,7 +130,7 @@ public interface AfterUndeleteHandlerMethod {
 ```
 
 ## List of TriggerHandler overridable methods
-Also, you can directly define all your logic in your sObject trigger handler just overriding the next methods
+Also, you can directly define all your logic in your sObject trigger handler just overriding the next methods:
 
 * `beforeInsert()`
 * `beforeUpdate()`
@@ -166,5 +166,12 @@ public class AccountTriggerHandler extends TriggerHandler {
     }
 }
 ```
+
+## Change log
+Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+
 ## References
 The idea of this framework was based on the main concepts of [TDTM](https://powerofus.force.com/s/article/EDA-TDTM-Overview "TDTM Overview") framework and Kevin O'Hara`s [sfdc-trigger-framework](https://github.com/kevinohara80/sfdc-trigger-framework "sfdc-trigger-framework").
+
+## License
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
