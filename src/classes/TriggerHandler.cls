@@ -4,6 +4,7 @@ public virtual class TriggerHandler {
     @TestVisible
     private TriggerHandlerMetadataProvider metadataProvider = new TriggerHandlerMetadataProvider();
     private String triggerHandlerName;
+    private Trigger_Handler_Settings__mdt triggerHandlerSettings;
 
     protected TriggerHandler(System.TriggerOperation triggerOperation,
                              List<SObject> newList,
@@ -75,27 +76,29 @@ public virtual class TriggerHandler {
     protected Integer size { protected get; private set; }
 
     public void dispatch() {
-        switch on this.triggerOperation {
-            when BEFORE_INSERT {
-                this.beforeInsert();
-            }
-            when AFTER_INSERT {
-                this.afterInsert();
-            }
-            when BEFORE_UPDATE {
-                this.beforeUpdate();
-            }
-            when AFTER_UPDATE {
-                this.afterUpdate();
-            }
-            when BEFORE_DELETE {
-                this.beforeDelete();
-            }
-            when AFTER_DELETE {
-                this.afterDelete();
-            }
-            when AFTER_UNDELETE {
-                this.afterUndelete();
+        if (isTriggerEnabled()) {
+            switch on this.triggerOperation {
+                when BEFORE_INSERT {
+                    this.beforeInsert();
+                }
+                when AFTER_INSERT {
+                    this.afterInsert();
+                }
+                when BEFORE_UPDATE {
+                    this.beforeUpdate();
+                }
+                when AFTER_UPDATE {
+                    this.afterUpdate();
+                }
+                when BEFORE_DELETE {
+                    this.beforeDelete();
+                }
+                when AFTER_DELETE {
+                    this.afterDelete();
+                }
+                when AFTER_UNDELETE {
+                    this.afterUndelete();
+                }
             }
         }
     }
@@ -203,6 +206,43 @@ public virtual class TriggerHandler {
                 }
             }
         }
+    }
+
+    private Boolean isTriggerEnabled() {
+        Boolean isTriggerEnabled = true;
+        List<Trigger_Handler_Settings__mdt> handlerSettings = this.metadataProvider.getHandlerSettings(this.triggerHandlerName);
+        if (!handlerSettings.isEmpty()) {
+            isTriggerEnabled = false;
+            Trigger_Handler_Settings__mdt currentHandlerSettings = handlerSettings.get(0);
+            if (currentHandlerSettings.Is_Globally_Enabled__c) {
+                isTriggerEnabled = true;
+                switch on this.triggerOperation {
+                    when BEFORE_INSERT {
+                        isTriggerEnabled = currentHandlerSettings.Is_Before_Insert_Enabled__c;
+                    }
+                    when AFTER_INSERT {
+                        isTriggerEnabled = currentHandlerSettings.Is_After_Insert_Enabled__c;
+                    }
+                    when BEFORE_UPDATE {
+                        isTriggerEnabled = currentHandlerSettings.Is_Before_Update_Enabled__c;
+                    }
+                    when AFTER_UPDATE {
+                        isTriggerEnabled = currentHandlerSettings.Is_After_Update_Enabled__c;
+                    }
+                    when BEFORE_DELETE {
+                        isTriggerEnabled = currentHandlerSettings.Is_Before_Delete_Enabled__c;
+                    }
+                    when AFTER_DELETE {
+                        isTriggerEnabled = currentHandlerSettings.Is_After_Delete_Enabled__c;
+                    }
+                    when AFTER_UNDELETE {
+                        isTriggerEnabled = currentHandlerSettings.Is_After_Undelete_Enabled__c;
+                    }
+                }
+            }
+        }
+        
+        return isTriggerEnabled;
     }
 
     private List<String> getHandlerMethodNames() {
