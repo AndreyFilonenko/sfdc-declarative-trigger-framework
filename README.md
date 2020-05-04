@@ -8,7 +8,7 @@
 </a>
 
 ## Overview
-A simple and minimal framework for Salesforce Apex triggers with declarative trigger handlers management - in accordance with Salesforce development best practices, defines a single entry point for sObject trigger with dispatching handler functions by a specific trigger event. Also gives an ability to manage trigger handlers with the no-code approach, just managing custom metadata descriptors via point and clicks.
+A simple and minimal framework for Salesforce Apex triggers with declarative trigger handlers management - in accordance with Salesforce development best practices, defines a single entry point for sObject trigger with dispatching handler functions by a specific trigger event. Also gives an ability to manage trigger handlers with the no-code approach, just managing custom metadata definitions via point and clicks.
 
 ## *TriggerHandler* public API
 #### Properties:
@@ -67,10 +67,16 @@ public class AccountTriggerHandler extends TriggerHandler {
 }
 ```
 
-Finally, define the handler with the next pattern:
+Finally, define the handler with the next pattern (implement the [Callable interface](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_interface_System_Callable.htm)):
 ```java
-public class AccountTriggerHandlerMethodBeforeInsert implements TriggerHandler.BeforeInsertHandlerMethod {
-    public void execute(List<SObject> newList) {
+public class AccountTriggerHandlerMethodBeforeInsert implements Callable {
+    /** 
+     * See possible params values below:
+     * @param action - will contain the string name of TriggerOperation enum value for the current context
+     * @param args - will contain a map of Trigger props with the prop names as keys
+     *               For example, you can retrieve newList by the key 'newList' for BEFORE_INSERT event handler     
+     */
+    Object call(String action, Map<String, Object> args) {
         // put your logic here...
     }
 }
