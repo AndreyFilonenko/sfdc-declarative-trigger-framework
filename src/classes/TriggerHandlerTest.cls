@@ -325,57 +325,66 @@ public class TriggerHandlerTest {
         }
     }
 
-    public class TestTriggerHandlerBEFORE_INSERT1 implements TriggerHandler.BeforeInsertHandlerMethod {
-        public void execute(List<SObject> newList) {
+    public class TestTriggerHandlerBEFORE_INSERT1 implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'beforeInsert1';
+            return null;
         }
     }
     
-    public class TestTriggerHandlerBEFORE_INSERT2 implements TriggerHandler.BeforeInsertHandlerMethod {
-        public void execute(List<SObject> newList) {
+    public class TestTriggerHandlerBEFORE_INSERT2 implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'beforeInsert2';
+            return null;
         }
     }
     
-    public class TestTriggerHandlerBEFORE_INSERT3 implements TriggerHandler.BeforeInsertHandlerMethod {
-        public void execute(List<SObject> newList) {
+    public class TestTriggerHandlerBEFORE_INSERT3 implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'beforeInsert3';
+            return null;
         }
     }
 
-    public class TestTriggerHandlerAFTER_INSERT implements TriggerHandler.AfterInsertHandlerMethod {
-        public void execute(List<SObject> newList) {
+    public class TestTriggerHandlerAFTER_INSERT implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'afterInsert';
+            return null;
         }
     }
 
-    public class TestTriggerHandlerBEFORE_UPDATE implements TriggerHandler.BeforeUpdateHandlerMethod {
-        public void execute(List<SObject> newList, List<SObject> oldList) {
+    public class TestTriggerHandlerBEFORE_UPDATE implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'beforeUpdate';
+            return null;
         }
     }
 
-    public class TestTriggerHandlerAFTER_UPDATE implements TriggerHandler.AfterUpdateHandlerMethod {
-        public void execute(List<SObject> newList, List<SObject> oldList) {
+    public class TestTriggerHandlerAFTER_UPDATE implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'afterUpdate';
+            return null;
         }
     }
 
-    public class TestTriggerHandlerBEFORE_DELETE implements TriggerHandler.BeforeDeleteHandlerMethod {
-        public void execute(List<SObject> oldList) {
+    public class TestTriggerHandlerBEFORE_DELETE implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'beforeDelete';
+            return null;
         }
     }
 
-    public class TestTriggerHandlerAFTER_DELETE implements TriggerHandler.AfterDeleteHandlerMethod {
-        public void execute(List<SObject> oldList) {
+    public class TestTriggerHandlerAFTER_DELETE implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'afterDelete';
+            return null;
         }
     }
 
-    public class TestTriggerHandlerAFTER_UNDELETE implements TriggerHandler.AfterUndeleteHandlerMethod {
-        public void execute(List<SObject> newList) {
+    public class TestTriggerHandlerAFTER_UNDELETE implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'afterUndelete';
+            return null;
         }
     }
 }
