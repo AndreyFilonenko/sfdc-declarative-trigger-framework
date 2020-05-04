@@ -87,56 +87,6 @@ public class AccountTriggerHandlerMethodBeforeInsert implements Callable {
 
 #### See the detailed example of the usage [here!](https://github.com/AndreyFilonenko/sfdc-declarative-trigger-framework/tree/example-of-usage)
 
-## List of Interfaces
-#### TriggerHandler.BeforeInsertHandlerMethod
-```java
-public interface BeforeInsertHandlerMethod {
-    void execute(List<SObject> newList);
-}
-```
-
-#### TriggerHandler.AfterInsertHandlerMethod
-```java
-public interface AfterInsertHandlerMethod {
-    void execute(List<SObject> newList);
-}
-```
-
-#### TriggerHandler.BeforeUpdateHandlerMethod
-```java
-public interface BeforeUpdateHandlerMethod {
-    void execute(List<SObject> newList, List<SObject> oldList);
-}
-```
-
-#### TriggerHandler.AfterUpdateHandlerMethod
-```java
-public interface AfterUpdateHandlerMethod {
-    void execute(List<SObject> newList, List<SObject> oldList);
-}
-```
-
-#### TriggerHandler.BeforeDeleteHandlerMethod
-```java
-public interface BeforeDeleteHandlerMethod {
-    void execute(List<SObject> oldList);
-}
-```
-
-#### TriggerHandler.AfterDeleteHandlerMethod
-```java
-public interface AfterDeleteHandlerMethod {
-    void execute(List<SObject> oldList);
-}
-```
-
-#### TriggerHandler.AfterUndeleteHandlerMethod
-```java
-public interface AfterUndeleteHandlerMethod {
-    void execute(List<SObject> newList);
-}
-```
-
 ## List of TriggerHandler overridable methods
 Also, you can directly define all your logic in your sObject trigger handler just overriding the next methods:
 
