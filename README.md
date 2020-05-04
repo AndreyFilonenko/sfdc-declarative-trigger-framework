@@ -1,6 +1,6 @@
 # Salesforce Apex trigger framework
 
-[![Build Status](https://travis-ci.org/AndreyFilonenko/sfdc-declarative-trigger-framework.svg?branch=master)](https://travis-ci.org/AndreyFilonenko/sfdc-declarative-trigger-framework)
+[![CircleCI](https://circleci.com/gh/forcedotcom/sfdx-circleci.svg?style=svg)](https://circleci.com/gh/AndreyFilonenko/sfdc-declarative-trigger-framework)
 
 <a href="https://githubsfdeploy.herokuapp.com?owner=AndreyFilonenko&repo=sfdc-declarative-trigger-framework&ref=master">
   <img alt="Deploy to Salesforce"
@@ -8,7 +8,7 @@
 </a>
 
 ## Overview
-A simple and minimal framework for Salesforce Apex triggers with declarative trigger handlers management - in accordance with Salesforce development best practices, defines a single entry point for sObject trigger with dispatching handler functions by a specific trigger event. Also gives an ability to manage trigger handlers with the no-code approach, just managing custom metadata descriptors via point and clicks.
+A simple and minimal framework for Salesforce Apex triggers with declarative trigger handlers management - in accordance with Salesforce development best practices, defines a single entry point for sObject trigger with dispatching handler functions by a specific trigger event. Also gives an ability to manage trigger handlers with the no-code approach, just managing custom metadata definitions via point and clicks.
 
 ## *TriggerHandler* public API
 #### Properties:
@@ -67,10 +67,16 @@ public class AccountTriggerHandler extends TriggerHandler {
 }
 ```
 
-Finally, define the handler with the next pattern:
+Finally, define the handler with the next pattern (implement the [Callable interface](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_interface_System_Callable.htm)):
 ```java
-public class AccountTriggerHandlerMethodBeforeInsert implements TriggerHandler.BeforeInsertHandlerMethod {
-    public void execute(List<SObject> newList) {
+public class AccountTriggerHandlerMethodBeforeInsert implements Callable {
+    /** 
+     * See possible params values below:
+     * @param action - will contain the string name of TriggerOperation enum value for the current context
+     * @param args - will contain a map of Trigger props with the prop names as keys
+     *               For example, you can retrieve newList by the key 'newList' for BEFORE_INSERT event handler     
+     */
+    Object call(String action, Map<String, Object> args) {
         // put your logic here...
     }
 }
@@ -80,56 +86,6 @@ public class AccountTriggerHandlerMethodBeforeInsert implements TriggerHandler.B
 ![image](https://user-images.githubusercontent.com/23140402/80317415-5a0ce100-880c-11ea-9cdb-7f5c4f6a8239.png)
 
 #### See the detailed example of the usage [here!](https://github.com/AndreyFilonenko/sfdc-declarative-trigger-framework/tree/example-of-usage)
-
-## List of Interfaces
-#### TriggerHandler.BeforeInsertHandlerMethod
-```java
-public interface BeforeInsertHandlerMethod {
-    void execute(List<SObject> newList);
-}
-```
-
-#### TriggerHandler.AfterInsertHandlerMethod
-```java
-public interface AfterInsertHandlerMethod {
-    void execute(List<SObject> newList);
-}
-```
-
-#### TriggerHandler.BeforeUpdateHandlerMethod
-```java
-public interface BeforeUpdateHandlerMethod {
-    void execute(List<SObject> newList, List<SObject> oldList);
-}
-```
-
-#### TriggerHandler.AfterUpdateHandlerMethod
-```java
-public interface AfterUpdateHandlerMethod {
-    void execute(List<SObject> newList, List<SObject> oldList);
-}
-```
-
-#### TriggerHandler.BeforeDeleteHandlerMethod
-```java
-public interface BeforeDeleteHandlerMethod {
-    void execute(List<SObject> oldList);
-}
-```
-
-#### TriggerHandler.AfterDeleteHandlerMethod
-```java
-public interface AfterDeleteHandlerMethod {
-    void execute(List<SObject> oldList);
-}
-```
-
-#### TriggerHandler.AfterUndeleteHandlerMethod
-```java
-public interface AfterUndeleteHandlerMethod {
-    void execute(List<SObject> newList);
-}
-```
 
 ## List of TriggerHandler overridable methods
 Also, you can directly define all your logic in your sObject trigger handler just overriding the next methods:
