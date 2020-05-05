@@ -10,6 +10,11 @@
 ## Overview
 A simple and minimal framework for Salesforce Apex triggers with declarative trigger handlers management - in accordance with Salesforce development best practices, defines a single entry point for sObject trigger with dispatching handler functions by a specific trigger event. Also gives an ability to manage trigger handlers with the no-code approach, just managing custom metadata definitions via point and clicks.
 
+There are three main blocks of functionality:
+* Trigger handler backbone with event handlers and dispatcher logic.
+* Trigger enablement logic, which allows you to disable the trigger hanler globally or by for a specific event (Optionally).
+* Trigger handler logic management for determining the handlers and order of their execution for specific event (Optionally).
+
 ## *TriggerHandler* public API
 #### Properties:
 * `List<SObject> newList` - readonly, returns the Trigger.new records.
@@ -25,7 +30,21 @@ A simple and minimal framework for Salesforce Apex triggers with declarative tri
     3. Call of the `oldList` property on `Before Insert`, `After Insert` or `After Undelete` trigger events.
     4. Call of the `oldMap` property on `Before Insert`, `After Insert` or `After Undelete` trigger events.
 
+#### Overridable methods
+Also, you can directly define all your logic in your sObject trigger handler just overriding the next methods:
+
+* `beforeInsert()`
+* `beforeUpdate()`
+* `beforeDelete()`
+* `afterInsert()`
+* `afterUpdate()`
+* `afterDelete()`
+* `afterUndelete()`
+
+But keep in mind - to prevent blocking of other features your method overrides must include base class method call, also your overriden functionality will be executed after all declarative handler methods ([see here](#Override-example)).
+
 ## Usage
+### Main functionality
 First, create an Apex trigger for sObject:
 ```java  
 trigger AccountTrigger on Account (before insert,
@@ -67,14 +86,34 @@ public class AccountTriggerHandler extends TriggerHandler {
 }
 ```
 
-Finally, define the handler with the next pattern (implement the [Callable interface](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_interface_System_Callable.htm)):
+Finally, override the base methods with logic you need:
+###### Override example
+```java
+public class AccountTriggerHandler extends TriggerHandler {
+    ...
+
+    public override void beforeInsert() {
+        // base method call
+        super.beforeInsert();
+
+        // put your overriden logic here...
+    }
+}
+```
+### Trigger enablement management (optionally)
+Create **Trigger_Handler_Settings__mdt** record to describe the sObject trigger behavior globally or on the specific event:
+![image](https://user-images.githubusercontent.com/23140402/81047299-cf3e7d00-8ec2-11ea-9ba0-1990d573fa88.png)
+By default the trigger handler enabled globally with all events.
+
+### Trigger handlers management (optionally)
+Define the handler with the next pattern (implement the [Callable interface](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_interface_System_Callable.htm)):
 ```java
 public class AccountTriggerHandlerMethodBeforeInsert implements Callable {
     /** 
      * See possible params values below:
      * @param action - will contain the string name of TriggerOperation enum value for the current context
      * @param args - will contain a map of Trigger props with the prop names as keys
-     *               For example, you can retrieve newList by the key 'newList' for BEFORE_INSERT event handler     
+     *               For example, you can retrieve newList by the key 'newList' for BEFORE_INSERT event handler 
      */
     Object call(String action, Map<String, Object> args) {
         // put your logic here...
@@ -86,44 +125,6 @@ public class AccountTriggerHandlerMethodBeforeInsert implements Callable {
 ![image](https://user-images.githubusercontent.com/23140402/80317415-5a0ce100-880c-11ea-9cdb-7f5c4f6a8239.png)
 
 #### See the detailed example of the usage [here!](https://github.com/AndreyFilonenko/sfdc-declarative-trigger-framework/tree/example-of-usage)
-
-## List of TriggerHandler overridable methods
-Also, you can directly define all your logic in your sObject trigger handler just overriding the next methods:
-
-* `beforeInsert()`
-* `beforeUpdate()`
-* `beforeDelete()`
-* `afterInsert()`
-* `afterUpdate()`
-* `afterDelete()`
-* `afterUndelete()`
-
-But keep in mind - your method overrides must include base class method call, also your overriden functionality will be executed after all declarative handler methods.
-```java
-public class AccountTriggerHandler extends TriggerHandler {
-    public AccountTriggerHandler(System.TriggerOperation triggerOperation,
-                                 List<Account> newList,
-                                 Map<Id, Account> newMap,
-                                 List<Account> oldList,
-                                 Map<Id, Account> oldMap,
-                                 Integer size) {
-        super(
-            triggerOperation,
-            newList,
-            newMap,
-            oldList,
-            oldMap,
-            size
-        );
-    }
-
-    public override void beforeInsert() {
-        super.beforeInsert();
-
-        // put your overriden logic here...
-    }
-}
-```
 
 ## Change log
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
