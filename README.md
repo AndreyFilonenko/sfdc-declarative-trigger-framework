@@ -10,10 +10,12 @@
 ## Overview
 A simple and minimal framework for Salesforce Apex triggers with declarative trigger handlers management - in accordance with Salesforce development best practices, defines a single entry point for sObject trigger with dispatching handler functions by a specific trigger event. Also gives an ability to manage trigger handlers with the no-code approach, just managing custom metadata definitions via point and clicks.
 
+
 There are three main blocks of functionality:
 * Trigger handler backbone with event handlers and dispatcher logic.
 * Trigger enablement logic, which allows you to disable the trigger hanler globally or by for a specific event (Optionally).
 * Trigger handler logic management for determining the handlers and order of their execution for specific event (Optionally).
+
 
 ## *TriggerHandler* public API
 #### Properties:
@@ -108,6 +110,7 @@ By default the trigger handler enabled globally with all events.
 ### Trigger handlers management (optionally)
 Define the handler with the next pattern (implement the [Callable interface](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_interface_System_Callable.htm)):
 ```java
+
 public class AccountTriggerHandlerMethodBeforeInsert implements Callable {
     /** 
      * See possible params values below:
