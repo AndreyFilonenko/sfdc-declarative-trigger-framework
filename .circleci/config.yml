@@ -1,53 +1,51 @@
 version: 2
 jobs:
   build:
-    docker:
-        - image: circleci/node:latest
+    machine: true
+    working_directory: ~/ci_app
+    environment:
+      - DX_CLI_URL: https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
     steps:
         - checkout
-        - restore_cache:
-            keys:
-                - sfdx-6.8.2-local
         - run:
-            name: Install Salesforce DX
+            name: Download CLI
             command: |
-                if [ ! -d node_modules/sfdx-cli ]; then
-                    export SFDX_AUTOUPDATE_DISABLE=true
-                    export SFDX_USE_GENERIC_UNIX_KEYCHAIN=true
-                    export SFDX_DOMAIN_RETRY=300
-                    npm install sfdx-cli@6.8.2
-                    node_modules/sfdx-cli/bin/run --version
-                    node_modules/sfdx-cli/bin/run plugins --core
-                fi
-        - save_cache:
-            key: sfdx-6.8.2-local
-            paths: 
-                - node_modules
+                mkdir sfdx
+                wget -qO- $DX_CLI_URL | tar xJ -C sfdx --strip-components 1
+        - run:
+            name: Install CLI
+            command: |
+                ./sfdx/install
+                sfdx
+        - run:
+            name: Create hub key
+            command: |
+                echo 'make hub key'
+                openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
         - run: 
             name: Create Scratch Org
             command: |
-                openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
-                node_modules/sfdx-cli/bin/run force:auth:jwt:grant --clientid $HUB_CONSUMER_KEY --jwtkeyfile assets/server.key --username $HUB_SFDC_USER --setdefaultdevhubusername -a DevHub
-                node_modules/sfdx-cli/bin/run force:org:create -s edition=Developer -a circle_build_$CIRCLE_BUILD_NUM --wait 5
+                sfdx force:auth:jwt:grant --clientid $HUB_CONSUMER_KEY --jwtkeyfile assets/server.key --username $HUB_SFDC_USER --setdefaultdevhubusername -a DevHub
+                sfdx force:org:create -s edition=Developer -a circle_build_$CIRCLE_BUILD_NUM --wait 5
         - run:
             name: Remove Server Key
             when: always
             command: |
                 rm assets/server.key
         - run: 
-            name: Convert MDAPI source to SFDX 
+            name: Convert MDAPI source to SFDX
             command: |
-                node_modules/sfdx-cli/bin/run force:mdapi:convert --rootdir src
+                sfdx force:mdapi:convert --rootdir src
         - run: 
             name: Push Source
             command: |
-                node_modules/sfdx-cli/bin/run force:source:push -u circle_build_$CIRCLE_BUILD_NUM
+                sfdx force:source:push -u circle_build_$CIRCLE_BUILD_NUM
         - run:
             name: Run Apex Tests
             command: |
                 mkdir ~/tests
                 mkdir ~/tests/apex
-                node_modules/sfdx-cli/bin/run force:apex:test:run -u circle_build_$CIRCLE_BUILD_NUM -c -r human -d ~/tests/apex -w 9999
+                sfdx force:apex:test:run -u circle_build_$CIRCLE_BUILD_NUM -c -r human -d ~/tests/apex -w 9999
         - run: 
             name: Push to Codecov.io
             command: |
@@ -57,7 +55,7 @@ jobs:
             name: Clean Up
             when: always
             command: |
-                node_modules/sfdx-cli/bin/run force:org:delete -u circle_build_$CIRCLE_BUILD_NUM -p
+                sfdx force:org:delete -u circle_build_$CIRCLE_BUILD_NUM -p
                 rm ~/tests/apex/*.txt ~/tests/apex/test-result-7*.json
         - store_artifacts:
             path: ~/tests
@@ -94,4 +92,4 @@ workflows:
   test_and_static:
     jobs:
       - build
-      - static-analysis
+      #- static-analysis
