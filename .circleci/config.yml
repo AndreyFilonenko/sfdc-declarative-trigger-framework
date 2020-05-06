@@ -84,7 +84,7 @@ jobs:
       - run: 
           name: Run Static Analysis
           command: |
-              pmd-bin-6.23.0/bin/run.sh pmd -d . -R pmd-ruleset.xml -f text -l apex -r static-analysis.txt -cache nonexistingfile.cache
+              pmd-bin-6.23.0/bin/run.sh pmd -d . -R pmd-ruleset.xml -f text -l apex -r static-analysis.txt -cache nonexistingfile.cache -failOnViolation false
       - store_artifacts:
           path: static-analysis.txt
 workflows:
