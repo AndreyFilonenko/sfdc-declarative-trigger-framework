@@ -68,23 +68,23 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - pmd-v6.0.1
+            - pmd-v6.23.0
       - run:
           name: Install PMD
           command: |
-              if [ ! -d pmd-bin-6.0.1 ]; then
-                  curl -L "https://github.com/pmd/pmd/releases/download/pmd_releases/6.0.1/pmd-bin-6.0.1.zip" -o pmd-bin-6.0.1.zip
-                  unzip pmd-bin-6.0.1.zip
-                  rm pmd-bin-6.0.1.zip
+              if [ ! -d pmd-bin-6.23.0 ]; then
+                  curl -L "https://github.com/pmd/pmd/releases/download/pmd_releases/6.0.1/pmd-bin-6.0.1.zip" -o pmd-bin-6.23.0.zip
+                  unzip pmd-bin-6.23.0.zip
+                  rm pmd-bin-6.23.0.zip
               fi
       - save_cache:
-          key: pmd-v6.0.1
+          key: pmd-v6.23.0
           paths: 
-              - pmd-bin-6.0.1
+              - pmd-bin-6.23.0
       - run: 
           name: Run Static Analysis
           command: |
-              pmd-bin-6.0.1/bin/run.sh pmd -d . -R pmd-ruleset.xml -f text -l apex -r static-analysis.txt 
+              pmd-bin-6.23.0/bin/run.sh pmd -d . -R pmd-ruleset.xml -f text -l apex -r static-analysis.txt 
       - store_artifacts:
           path: static-analysis.txt
 workflows:
