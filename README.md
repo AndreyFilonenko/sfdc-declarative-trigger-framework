@@ -1,6 +1,6 @@
 # Salesforce Apex trigger framework
 
-[![CircleCI](https://circleci.com/gh/forcedotcom/sfdx-circleci.svg?style=svg)](https://circleci.com/gh/AndreyFilonenko/sfdc-declarative-trigger-framework)
+[![CircleCI](https://circleci.com/gh/forcedotcom/sfdx-circleci.svg?style=svg)](https://circleci.com/gh/AndreyFilonenko/sfdc-declarative-trigger-framework) [![codecov](https://codecov.io/gh/AndreyFilonenko/sfdc-declarative-trigger-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/AndreyFilonenko/sfdc-declarative-trigger-framework)
 
 <a href="https://githubsfdeploy.herokuapp.com?owner=AndreyFilonenko&repo=sfdc-declarative-trigger-framework&ref=master">
   <img alt="Deploy to Salesforce"
@@ -19,11 +19,11 @@ There are three main blocks of functionality:
 
 ## *TriggerHandler* public API
 #### Properties:
-* `List<SObject> newList` - readonly, returns the Trigger.new records.
-* `Map<Id, SObject> newMap` - readonly, returns the Trigger.newMap records.
-* `List<SObject> oldList` - readonly, returns the Trigger.old records.
-* `Map<Id, SObject> oldMap` - readonly, returns the Trigger.oldMap records.
-* `Integer size` - readonly, returns the quantity of trigger records.
+* `List<SObject> *newList*` - readonly, returns the Trigger.new records.
+* `Map<Id, SObject> *newMap*` - readonly, returns the Trigger.newMap records.
+* `List<SObject> *oldList*` - readonly, returns the Trigger.old records.
+* `Map<Id, SObject> *oldMap*` - readonly, returns the Trigger.oldMap records.
+* `Integer *size*` - readonly, returns the quantity of trigger records.
 
 #### Exceptions
 * `TriggerHandlerException` - will be thrown in the next cases:
@@ -103,7 +103,7 @@ public class AccountTriggerHandler extends TriggerHandler {
 }
 ```
 ### Trigger enablement management (optionally)
-Create **Trigger_Handler_Settings__mdt** record to describe the sObject trigger behavior globally or on the specific event:
+Create a **Trigger_Handler_Settings__mdt** record to describe the sObject trigger behavior globally or on the specific event:
 ![image](https://user-images.githubusercontent.com/23140402/81047299-cf3e7d00-8ec2-11ea-9ba0-1990d573fa88.png)
 By default the trigger handler enabled globally with all events.
 
@@ -116,7 +116,7 @@ public class AccountTriggerHandlerMethodBeforeInsert implements Callable {
      * See possible params values below:
      * @param action - will contain the string name of TriggerOperation enum value for the current context
      * @param args - will contain a map of Trigger props with the prop names as keys
-     *               For example, you can retrieve newList by the key 'newList' for BEFORE_INSERT event handler 
+     *               For example, you can retrieve newList by the key 'newList' for BEFORE_INSERT event handler
      */
     Object call(String action, Map<String, Object> args) {
         // put your logic here...
