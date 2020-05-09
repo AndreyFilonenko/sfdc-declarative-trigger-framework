@@ -92,7 +92,7 @@ workflows:
   test_and_static:
     jobs:
       - build:
-        filters:
-          branches:
-            ignore: example-of-usage
+          filters:
+            branches:
+              ignore: example-of-usage
       - static-analysis
