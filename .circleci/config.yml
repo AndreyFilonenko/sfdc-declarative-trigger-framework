@@ -1,66 +1,69 @@
 version: 2
 jobs:
   build:
-  machine: true
-  working_directory: ~/ci_app
-  environment:
-    - DX_CLI_URL: https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-  steps:
-    - checkout
-    - run:
-        name: Download CLI
-        command: |
-          mkdir sfdx
-          wget -qO- $DX_CLI_URL | tar xJ -C sfdx --strip-components 1
-    - run:
-        name: Install CLI
-        command: |
-          ./sfdx/install
-          sfdx
-    - run:
-        name: Create hub key
-        command: |
-          echo 'make hub key'
-          openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
-    - run: 
-        name: Create Scratch Org
-        command: |
-          sfdx force:auth:jwt:grant --clientid $HUB_CONSUMER_KEY --jwtkeyfile assets/server.key --username $HUB_SFDC_USER --setdefaultdevhubusername -a DevHub
-          sfdx force:org:create -s edition=Developer -a circle_build_$CIRCLE_BUILD_NUM --wait 5
-    - run:
-        name: Remove Server Key
-        when: always
-        command: |
-          rm assets/server.key
-    - run: 
-        name: Convert MDAPI source to SFDX
-        command: |
-          sfdx force:mdapi:convert --rootdir src
-    - run: 
-        name: Push Source
-        command: |
-          sfdx force:source:push -u circle_build_$CIRCLE_BUILD_NUM
-    - run:
-        name: Run Apex Tests
-        command: |
-          mkdir ~/tests
-          mkdir ~/tests/apex
-          sfdx force:apex:test:run -u circle_build_$CIRCLE_BUILD_NUM -c -r human -d ~/tests/apex -w 9999
-    - run: 
-        name: Push to Codecov.io
-        command: |
-          cp ~/tests/apex/test-result-codecoverage.json .
-          bash <(curl -s https://codecov.io/bash)
-    - run: 
-        name: Clean Up
-        when: always
-        command: |
-          sfdx force:org:delete -u circle_build_$CIRCLE_BUILD_NUM -p
-          rm ~/tests/apex/*.txt ~/tests/apex/test-result-7*.json
-    - store_artifacts:
-        path: ~/tests
-    - store_test_results:
-        path: ~/tests
+    branches:
+        ignore:
+            - example-of-usage
+    machine: true
+    working_directory: ~/ci_app
+    environment:
+      - DX_CLI_URL: https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+    steps:
+        - checkout
+        - run:
+            name: Download CLI
+            command: |
+                mkdir sfdx
+                wget -qO- $DX_CLI_URL | tar xJ -C sfdx --strip-components 1
+        - run:
+            name: Install CLI
+            command: |
+                ./sfdx/install
+                sfdx
+        - run:
+            name: Create hub key
+            command: |
+                echo 'make hub key'
+                openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
+        - run: 
+            name: Create Scratch Org
+            command: |
+                sfdx force:auth:jwt:grant --clientid $HUB_CONSUMER_KEY --jwtkeyfile assets/server.key --username $HUB_SFDC_USER --setdefaultdevhubusername -a DevHub
+                sfdx force:org:create -s edition=Developer -a circle_build_$CIRCLE_BUILD_NUM --wait 5
+        - run:
+            name: Remove Server Key
+            when: always
+            command: |
+                rm assets/server.key
+        - run: 
+            name: Convert MDAPI source to SFDX
+            command: |
+                sfdx force:mdapi:convert --rootdir src
+        - run: 
+            name: Push Source
+            command: |
+                sfdx force:source:push -u circle_build_$CIRCLE_BUILD_NUM
+        - run:
+            name: Run Apex Tests
+            command: |
+                mkdir ~/tests
+                mkdir ~/tests/apex
+                sfdx force:apex:test:run -u circle_build_$CIRCLE_BUILD_NUM -c -r human -d ~/tests/apex -w 9999
+        - run: 
+            name: Push to Codecov.io
+            command: |
+                cp ~/tests/apex/test-result-codecoverage.json .
+                bash <(curl -s https://codecov.io/bash)
+        - run: 
+            name: Clean Up
+            when: always
+            command: |
+                sfdx force:org:delete -u circle_build_$CIRCLE_BUILD_NUM -p
+                rm ~/tests/apex/*.txt ~/tests/apex/test-result-7*.json
+        - store_artifacts:
+            path: ~/tests
+        - store_test_results:
+            path: ~/tests
   static-analysis:
     docker:
       - image: circleci/openjdk:latest
@@ -72,27 +75,24 @@ jobs:
       - run:
           name: Install PMD
           command: |
-            if [ ! -d pmd-bin-6.23.0 ]; then
-                curl -L "https://github.com/pmd/pmd/releases/download/pmd_releases/6.23.0/pmd-bin-6.23.0.zip" -o pmd-bin-6.23.0.zip
-                unzip pmd-bin-6.23.0.zip
-                rm pmd-bin-6.23.0.zip
-            fi
+              if [ ! -d pmd-bin-6.23.0 ]; then
+                  curl -L "https://github.com/pmd/pmd/releases/download/pmd_releases/6.23.0/pmd-bin-6.23.0.zip" -o pmd-bin-6.23.0.zip
+                  unzip pmd-bin-6.23.0.zip
+                  rm pmd-bin-6.23.0.zip
+              fi
       - save_cache:
           key: pmd-v6.23.0
           paths: 
-            - pmd-bin-6.23.0
+              - pmd-bin-6.23.0
       - run: 
           name: Run Static Analysis
           command: |
-            pmd-bin-6.23.0/bin/run.sh pmd -d . -R pmd-ruleset.xml -f text -l apex -r static-analysis.txt -cache nonexistingfile.cache -failOnViolation false
+              pmd-bin-6.23.0/bin/run.sh pmd -d . -R pmd-ruleset.xml -f text -l apex -r static-analysis.txt -cache nonexistingfile.cache -failOnViolation false
       - store_artifacts:
           path: static-analysis.txt
 workflows:
   version: 2
   test_and_static:
     jobs:
-      - build:
-          filters:
-            branches:
-              ignore: example-of-usage
+      - build
       - static-analysis
