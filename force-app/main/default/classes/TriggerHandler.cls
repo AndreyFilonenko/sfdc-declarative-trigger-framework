@@ -4,6 +4,7 @@ public virtual class TriggerHandler {
     @TestVisible
     private TriggerHandlerMetadataProvider metadataProvider = new TriggerHandlerMetadataProvider();
     private String triggerHandlerName;
+    private Trigger_Handler_Settings__mdt triggerHandlerSettings;
 
     protected TriggerHandler(System.TriggerOperation triggerOperation,
                              List<SObject> newList,
@@ -75,134 +76,103 @@ public virtual class TriggerHandler {
     protected Integer size { protected get; private set; }
 
     public void dispatch() {
-        switch on this.triggerOperation {
-            when BEFORE_INSERT {
-                this.beforeInsert();
-            }
-            when AFTER_INSERT {
-                this.afterInsert();
-            }
-            when BEFORE_UPDATE {
-                this.beforeUpdate();
-            }
-            when AFTER_UPDATE {
-                this.afterUpdate();
-            }
-            when BEFORE_DELETE {
-                this.beforeDelete();
-            }
-            when AFTER_DELETE {
-                this.afterDelete();
-            }
-            when AFTER_UNDELETE {
-                this.afterUndelete();
+        if (isTriggerEnabled()) {
+            switch on this.triggerOperation {
+                when BEFORE_INSERT {
+                    this.beforeInsert();
+                }
+                when AFTER_INSERT {
+                    this.afterInsert();
+                }
+                when BEFORE_UPDATE {
+                    this.beforeUpdate();
+                }
+                when AFTER_UPDATE {
+                    this.afterUpdate();
+                }
+                when BEFORE_DELETE {
+                    this.beforeDelete();
+                }
+                when AFTER_DELETE {
+                    this.afterDelete();
+                }
+                when AFTER_UNDELETE {
+                    this.afterUndelete();
+                }
             }
         }
     }
 
     @TestVisible
     protected virtual void beforeInsert() {
-        List<String> handlerMethodNames = getHandlerMethodNames();
-        
-        if (!handlerMethodNames.isEmpty()) {
-            for (Integer i = 0; i < handlerMethodNames.size(); i++) {
-                if (Type.forName(handlerMethodNames[i]) != null) {
-                    Type t = Type.forName(handlerMethodNames[i]);
-                    BeforeInsertHandlerMethod currentHandlerMethod = (BeforeInsertHandlerMethod)t.newInstance();
-                    currentHandlerMethod.execute(this.newList);
-                }
-            }
-        }
+        executeHandlerMethods(this.triggerOperation.name(), this.newList, null);
     }
 
     @TestVisible
     protected virtual void afterInsert() {
-        List<String> handlerMethodNames = getHandlerMethodNames();
-        
-        if (!handlerMethodNames.isEmpty()) {
-            for (Integer i = 0; i < handlerMethodNames.size(); i++) {
-                if (Type.forName(handlerMethodNames[i]) != null) {
-                    Type t = Type.forName(handlerMethodNames[i]);
-                    AfterInsertHandlerMethod currentHandlerMethod = (AfterInsertHandlerMethod)t.newInstance();
-                    currentHandlerMethod.execute(this.newList);
-                }
-            }
-        }
+        executeHandlerMethods(this.triggerOperation.name(), this.newList, null);
     }
 
     @TestVisible
     protected virtual void beforeUpdate() {
-        List<String> handlerMethodNames = getHandlerMethodNames();
-        
-        if (!handlerMethodNames.isEmpty()) {
-            for (Integer i = 0; i < handlerMethodNames.size(); i++) {
-                if (Type.forName(handlerMethodNames[i]) != null) {
-                    Type t = Type.forName(handlerMethodNames[i]);
-                    BeforeUpdateHandlerMethod currentHandlerMethod = (BeforeUpdateHandlerMethod)t.newInstance();
-                    currentHandlerMethod.execute(this.newList, this.oldList);
-                }
-            }
-        }
+        executeHandlerMethods(this.triggerOperation.name(), this.newList, this.oldList);
     }
 
     @TestVisible
     protected virtual void afterUpdate() {
-        List<String> handlerMethodNames = getHandlerMethodNames();
-        
-        if (!handlerMethodNames.isEmpty()) {
-            for (Integer i = 0; i < handlerMethodNames.size(); i++) {
-                if (Type.forName(handlerMethodNames[i]) != null) {
-                    Type t = Type.forName(handlerMethodNames[i]);
-                    AfterUpdateHandlerMethod currentHandlerMethod = (AfterUpdateHandlerMethod)t.newInstance();
-                    currentHandlerMethod.execute(this.newList, this.oldList);
-                }
-            }
-        }
+        executeHandlerMethods(this.triggerOperation.name(), this.newList, this.oldList);
     }
 
     @TestVisible
     protected virtual void beforeDelete() {
-        List<String> handlerMethodNames = getHandlerMethodNames();
-        
-        if (!handlerMethodNames.isEmpty()) {
-            for (Integer i = 0; i < handlerMethodNames.size(); i++) {
-                if (Type.forName(handlerMethodNames[i]) != null) {
-                    Type t = Type.forName(handlerMethodNames[i]);
-                    BeforeDeleteHandlerMethod currentHandlerMethod = (BeforeDeleteHandlerMethod)t.newInstance();
-                    currentHandlerMethod.execute(this.oldList);
-                }
-            }
-        }
+        executeHandlerMethods(this.triggerOperation.name(), null, this.oldList);
     }
 
     @TestVisible
     protected virtual void afterDelete() {
-        List<String> handlerMethodNames = getHandlerMethodNames();
-        
-        if (!handlerMethodNames.isEmpty()) {
-            for (Integer i = 0; i < handlerMethodNames.size(); i++) {
-                if (Type.forName(handlerMethodNames[i]) != null) {
-                    Type t = Type.forName(handlerMethodNames[i]);
-                    AfterDeleteHandlerMethod currentHandlerMethod = (AfterDeleteHandlerMethod)t.newInstance();
-                    currentHandlerMethod.execute(this.oldList);
-                }
-            }
-        }
+        executeHandlerMethods(this.triggerOperation.name(), null, this.oldList);
     }
 
     @TestVisible
     protected virtual void afterUndelete() {
-        List<String> handlerMethodNames = getHandlerMethodNames();
-        
-        if (!handlerMethodNames.isEmpty()) {
-            for (Integer i = 0; i < handlerMethodNames.size(); i++) {
-                if (Type.forName(handlerMethodNames[i]) != null) {
-                    Type t = Type.forName(handlerMethodNames[i]);
-                    AfterUndeleteHandlerMethod currentHandlerMethod = (AfterUndeleteHandlerMethod)t.newInstance();
-                    currentHandlerMethod.execute(this.newList);
+        executeHandlerMethods(this.triggerOperation.name(), this.newList, null);
+    }
+
+    private Boolean isTriggerEnabled() {
+        Boolean isTriggerEnabled = true;
+        List<Trigger_Handler_Settings__mdt> handlerSettings = this.metadataProvider.getHandlerSettings(this.triggerHandlerName);
+        if (!handlerSettings.isEmpty()) {
+            isTriggerEnabled = false;
+            Trigger_Handler_Settings__mdt currentHandlerSettings = handlerSettings.get(0);
+            if (currentHandlerSettings.Is_Globally_Enabled__c) {
+                isTriggerEnabled = true;
+                switch on this.triggerOperation {
+                    when BEFORE_INSERT {
+                        isTriggerEnabled = currentHandlerSettings.Is_Before_Insert_Enabled__c;
+                    }
+                    when AFTER_INSERT {
+                        isTriggerEnabled = currentHandlerSettings.Is_After_Insert_Enabled__c;
+                    }
+                    when BEFORE_UPDATE {
+                        isTriggerEnabled = currentHandlerSettings.Is_Before_Update_Enabled__c;
+                    }
+                    when AFTER_UPDATE {
+                        isTriggerEnabled = currentHandlerSettings.Is_After_Update_Enabled__c;
+                    }
+                    when BEFORE_DELETE {
+                        isTriggerEnabled = currentHandlerSettings.Is_Before_Delete_Enabled__c;
+                    }
+                    when AFTER_DELETE {
+                        isTriggerEnabled = currentHandlerSettings.Is_After_Delete_Enabled__c;
+                    }
+                    when AFTER_UNDELETE {
+                        isTriggerEnabled = currentHandlerSettings.Is_After_Undelete_Enabled__c;
+                    }
                 }
             }
         }
+        
+        return isTriggerEnabled;
     }
 
     private List<String> getHandlerMethodNames() {
@@ -225,35 +195,29 @@ public virtual class TriggerHandler {
         return handlerMethodNames;
     }
 
+    private void executeHandlerMethods(String context, List<sObject> newList, List<sObject> oldList) {
+        List<String> handlerMethodNames = getHandlerMethodNames();
+        
+        if (!handlerMethodNames.isEmpty()) {
+            for (Integer i = 0; i < handlerMethodNames.size(); i++) {
+                if (Type.forName(handlerMethodNames[i]) != null) {
+                    Map<String, Object> argsMap = new Map<String, Object>();
+                    if (newList != null) {
+                        argsMap.put('newList', newList);
+                    }                    
+                    if (oldList != null) {
+                        argsMap.put('oldList', oldList);
+                    }
+
+                    Type handlerMethodType = Type.forName(handlerMethodNames[i]);
+                    Callable currentHandlerMethod = (Callable) handlerMethodType.newInstance();
+                    currentHandlerMethod.call(context, argsMap);
+                }
+            }
+        }
+    }
+
     public class TriggerHandlerException extends Exception {}
-
-    public interface BeforeInsertHandlerMethod {
-        void execute(List<SObject> newList);
-    }
-
-    public interface AfterInsertHandlerMethod {
-        void execute(List<SObject> newList);
-    }
-
-    public interface BeforeUpdateHandlerMethod {
-        void execute(List<SObject> newList, List<SObject> oldList);
-    }
-
-    public interface AfterUpdateHandlerMethod {
-        void execute(List<SObject> newList, List<SObject> oldList);
-    }
-
-    public interface BeforeDeleteHandlerMethod {
-        void execute(List<SObject> oldList);
-    }
-
-    public interface AfterDeleteHandlerMethod {
-        void execute(List<SObject> oldList);
-    }
-
-    public interface AfterUndeleteHandlerMethod {
-        void execute(List<SObject> newList);
-    }
 
     private class TriggerHandlerMethodWrapper implements Comparable {
         TriggerHandlerMethodWrapper(String handlerMethodName, Decimal executionOrder) {

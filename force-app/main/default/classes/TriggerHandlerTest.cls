@@ -5,7 +5,7 @@ public class TriggerHandlerTest {
     private static TriggerHandlerTest.TestTriggerHandler handler = new TriggerHandlerTest.TestTriggerHandler();
 
     @isTest
-    static void testPropertyNewList() {
+    private static void testPropertyNewList() {
         List<SObject> newList;
         handler.triggerOperation = System.TriggerOperation.BEFORE_DELETE;
         try {
@@ -22,12 +22,12 @@ public class TriggerHandlerTest {
         }
 
         handler.triggerOperation = System.TriggerOperation.BEFORE_INSERT;
-        newList = handler.newList;        
+        newList = handler.newList;
         System.assertNotEquals(null, newList);
     }
 
     @isTest
-    static void testPropertyNewMap() {
+    private static void testPropertyNewMap() {
         Map<Id, SObject> newMap;
         handler.triggerOperation = System.TriggerOperation.BEFORE_INSERT;
         try {
@@ -51,12 +51,12 @@ public class TriggerHandlerTest {
         }
 
         handler.triggerOperation = System.TriggerOperation.BEFORE_UPDATE;
-        newMap = handler.newMap;        
+        newMap = handler.newMap;
         System.assertNotEquals(null, newMap);
     }
 
     @isTest
-    static void testPropertyOldList() {
+    private static void testPropertyOldList() {
         List<SObject> oldList;
         handler.triggerOperation = System.TriggerOperation.BEFORE_INSERT;
         try {
@@ -80,12 +80,12 @@ public class TriggerHandlerTest {
         }
 
         handler.triggerOperation = System.TriggerOperation.BEFORE_UPDATE;
-        oldList = handler.oldList;        
+        oldList = handler.oldList;
         System.assertNotEquals(null, oldList);
     }
 
     @isTest
-    static void testPropertyOldMap() {
+    private static void testPropertyOldMap() {
         Map<Id, SObject> oldMap;
         handler.triggerOperation = System.TriggerOperation.BEFORE_INSERT;
         try {
@@ -114,13 +114,13 @@ public class TriggerHandlerTest {
     }
 
     @isTest
-    static void testPropertySize() {
+    private static void testPropertySize() {
         Integer size = handler.size;
         System.assertEquals(10, size);
     }
 
     @isTest
-    static void testDispatch() {
+    private static void testDispatch() {
         handler.triggerOperation = System.TriggerOperation.AFTER_UNDELETE;
 
         Test.startTest();
@@ -131,7 +131,7 @@ public class TriggerHandlerTest {
     }
 
     @isTest
-    static void testBeforeInsert() {
+    private static void testBeforeInsert() {
         handler.triggerOperation = System.TriggerOperation.BEFORE_INSERT;
         handler.metadataProvider = (TriggerHandlerMetadataProvider)Test.createStub(
             TriggerHandlerMetadataProvider.class,
@@ -146,7 +146,7 @@ public class TriggerHandlerTest {
     }
 
     @isTest
-    static void testAfterInsert() {
+    private static void testAfterInsert() {
         handler.triggerOperation = System.TriggerOperation.AFTER_INSERT;
         handler.metadataProvider = (TriggerHandlerMetadataProvider)Test.createStub(
             TriggerHandlerMetadataProvider.class,
@@ -161,7 +161,7 @@ public class TriggerHandlerTest {
     }
 
     @isTest
-    static void testBeforeUpdate() {
+    private static void testBeforeUpdate() {
         handler.triggerOperation = System.TriggerOperation.BEFORE_UPDATE;
         handler.metadataProvider = (TriggerHandlerMetadataProvider)Test.createStub(
             TriggerHandlerMetadataProvider.class,
@@ -176,7 +176,7 @@ public class TriggerHandlerTest {
     }
 
     @isTest
-    static void testAfterUpdate() {
+    private static void testAfterUpdate() {
         handler.triggerOperation = System.TriggerOperation.AFTER_UPDATE;
         handler.metadataProvider = (TriggerHandlerMetadataProvider)Test.createStub(
             TriggerHandlerMetadataProvider.class,
@@ -191,7 +191,7 @@ public class TriggerHandlerTest {
     }
 
     @isTest
-    static void testBeforeDelete() {
+    private static void testBeforeDelete() {
         handler.triggerOperation = System.TriggerOperation.BEFORE_DELETE;
         handler.metadataProvider = (TriggerHandlerMetadataProvider)Test.createStub(
             TriggerHandlerMetadataProvider.class,
@@ -206,7 +206,7 @@ public class TriggerHandlerTest {
     }
 
     @isTest
-    static void testAfterDelete() {
+    private static void testAfterDelete() {
         handler.triggerOperation = System.TriggerOperation.AFTER_DELETE;
         handler.metadataProvider = (TriggerHandlerMetadataProvider)Test.createStub(
             TriggerHandlerMetadataProvider.class,
@@ -221,7 +221,7 @@ public class TriggerHandlerTest {
     }
 
     @isTest
-    static void testAfterUndelete() {
+    private static void testAfterUndelete() {
         handler.triggerOperation = System.TriggerOperation.AFTER_UNDELETE;
         handler.metadataProvider = (TriggerHandlerMetadataProvider)Test.createStub(
             TriggerHandlerMetadataProvider.class,
@@ -255,7 +255,22 @@ public class TriggerHandlerTest {
                                        List<Type> listOfParamTypes,
                                        List<String> listOfParamNames, 
                                        List<Object> listOfArgs) {
-            System.TriggerOperation triggerOperation = (System.TriggerOperation)listOfArgs[1];
+            Object returnObject;
+            switch on stubbedMethodName {
+                when 'getHandlerMethods' {
+                    returnObject = getHandlerMethodsStub((System.TriggerOperation)listOfArgs[1]);
+                }
+                when 'getHandlerSettings' {
+                    returnObject = getHandlerSettingsStub();
+                }
+                when else {
+                    returnObject = null;
+                }
+            }
+            return returnObject;
+        }
+
+        private List<Trigger_Handler_Method__mdt> getHandlerMethodsStub(System.TriggerOperation triggerOperation) {
             List<Trigger_Handler_Method__mdt> testTriggerHandlerMethods = new List<Trigger_Handler_Method__mdt>();
             if (triggerOperation == System.TriggerOperation.BEFORE_INSERT) {
                 Trigger_Handler_Method__mdt testHandlerMethod1 = new Trigger_Handler_Method__mdt();
@@ -281,7 +296,7 @@ public class TriggerHandlerTest {
                 testHandlerMethod3.Trigger_Event_Type__c = triggerOperation.name();
                 testHandlerMethod3.Trigger_Handler_Name__c = TRIGGER_HANDLER_NAME;
                 testTriggerHandlerMethods.add(testHandlerMethod3);
-            } else {                
+            } else {
                 Trigger_Handler_Method__mdt testHandlerMethod = new Trigger_Handler_Method__mdt();
                 testHandlerMethod.DeveloperName = 'TriggerHandlerTest.' + TRIGGER_HANDLER_NAME + triggerOperation.name();
                 testHandlerMethod.Is_Enabled__c = true;
@@ -292,59 +307,84 @@ public class TriggerHandlerTest {
             }
             return testTriggerHandlerMethods;
         }
+
+        private List<Trigger_Handler_Settings__mdt> getHandlerSettingsStub() {
+            return new List<Trigger_Handler_Settings__mdt> {
+                new Trigger_Handler_Settings__mdt(
+                    DeveloperName = TRIGGER_HANDLER_NAME,
+                    Is_Globally_Enabled__c = true,
+                    Is_Before_Insert_Enabled__c = true,
+                    Is_After_Insert_Enabled__c = true,
+                    Is_Before_Update_Enabled__c = true,
+                    Is_After_Update_Enabled__c = true,
+                    Is_Before_Delete_Enabled__c = true,
+                    Is_After_Delete_Enabled__c = true,
+                    Is_After_Undelete_Enabled__c = true
+                )
+            };
+        }
     }
 
-    public class TestTriggerHandlerBEFORE_INSERT1 implements TriggerHandler.BeforeInsertHandlerMethod {
-        public void execute(List<SObject> newList) {
+    public class TestTriggerHandlerBEFORE_INSERT1 implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'beforeInsert1';
+            return null;
         }
     }
     
-    public class TestTriggerHandlerBEFORE_INSERT2 implements TriggerHandler.BeforeInsertHandlerMethod {
-        public void execute(List<SObject> newList) {
+    public class TestTriggerHandlerBEFORE_INSERT2 implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'beforeInsert2';
+            return null;
         }
     }
     
-    public class TestTriggerHandlerBEFORE_INSERT3 implements TriggerHandler.BeforeInsertHandlerMethod {
-        public void execute(List<SObject> newList) {
+    public class TestTriggerHandlerBEFORE_INSERT3 implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'beforeInsert3';
+            return null;
         }
     }
 
-    public class TestTriggerHandlerAFTER_INSERT implements TriggerHandler.AfterInsertHandlerMethod {
-        public void execute(List<SObject> newList) {
+    public class TestTriggerHandlerAFTER_INSERT implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'afterInsert';
+            return null;
         }
     }
 
-    public class TestTriggerHandlerBEFORE_UPDATE implements TriggerHandler.BeforeUpdateHandlerMethod {
-        public void execute(List<SObject> newList, List<SObject> oldList) {
+    public class TestTriggerHandlerBEFORE_UPDATE implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'beforeUpdate';
+            return null;
         }
     }
 
-    public class TestTriggerHandlerAFTER_UPDATE implements TriggerHandler.AfterUpdateHandlerMethod {
-        public void execute(List<SObject> newList, List<SObject> oldList) {
+    public class TestTriggerHandlerAFTER_UPDATE implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'afterUpdate';
+            return null;
         }
     }
 
-    public class TestTriggerHandlerBEFORE_DELETE implements TriggerHandler.BeforeDeleteHandlerMethod {
-        public void execute(List<SObject> oldList) {
+    public class TestTriggerHandlerBEFORE_DELETE implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'beforeDelete';
+            return null;
         }
     }
 
-    public class TestTriggerHandlerAFTER_DELETE implements TriggerHandler.AfterDeleteHandlerMethod {
-        public void execute(List<SObject> oldList) {
+    public class TestTriggerHandlerAFTER_DELETE implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'afterDelete';
+            return null;
         }
     }
 
-    public class TestTriggerHandlerAFTER_UNDELETE implements TriggerHandler.AfterUndeleteHandlerMethod {
-        public void execute(List<SObject> newList) {
+    public class TestTriggerHandlerAFTER_UNDELETE implements Callable {
+        public Object call(String action, Map<String, Object> args) {
             TriggerHandlerTest.lastMethodCalled = 'afterUndelete';
+            return null;
         }
     }
 }
