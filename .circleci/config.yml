@@ -1,9 +1,6 @@
 version: 2
 jobs:
   build:
-    branches:
-        ignore:
-            - example-of-usage
     machine: true
     working_directory: ~/ci_app
     environment:
@@ -94,5 +91,8 @@ workflows:
   version: 2
   test_and_static:
     jobs:
-      - build
+      - build:
+        filters:
+          branches:
+            ignore: example-of-usage
       - static-analysis
