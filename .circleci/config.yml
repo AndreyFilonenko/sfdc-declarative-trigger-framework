@@ -1,6 +1,9 @@
 version: 2
 jobs:
   build:
+    branches:
+        ignore:
+            - example-of-usage
     machine: true
     working_directory: ~/ci_app
     environment:
