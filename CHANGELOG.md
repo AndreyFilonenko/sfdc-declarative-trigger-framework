@@ -1,10 +1,16 @@
 # Changelog
 
-## 1.1.0
+## 1.0.0
+- First release, updated readme and examples of usage
+
+## 0.9.0
+- Changed custom interfaces to Callable
+
+## 0.7.0
 - Added TriggerHandler settings support
 
-## 1.0.1
+## 0.5.1
 - Updated README and example
 
-## 1.0.0
-- Initial release
+## 0.5.0
+- Main functionality 

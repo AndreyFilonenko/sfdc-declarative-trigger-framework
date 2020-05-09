@@ -1,6 +1,6 @@
 # Salesforce Apex trigger framework
 
-[![CircleCI](https://circleci.com/gh/forcedotcom/sfdx-circleci.svg?style=svg)](https://circleci.com/gh/AndreyFilonenko/sfdc-declarative-trigger-framework) [![codecov](https://codecov.io/gh/AndreyFilonenko/sfdc-declarative-trigger-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/AndreyFilonenko/sfdc-declarative-trigger-framework)
+[![CircleCI](https://circleci.com/gh/AndreyFilonenko/sfdc-declarative-trigger-framework.svg?style=svg)](https://circleci.com/gh/AndreyFilonenko/sfdc-declarative-trigger-framework) [![codecov](https://codecov.io/gh/AndreyFilonenko/sfdc-declarative-trigger-framework/branch/master/graph/badge.svg)](https://codecov.io/gh/AndreyFilonenko/sfdc-declarative-trigger-framework)
 
 <a href="https://githubsfdeploy.herokuapp.com?owner=AndreyFilonenko&repo=sfdc-declarative-trigger-framework&ref=master">
   <img alt="Deploy to Salesforce"
@@ -13,17 +13,17 @@ A simple and minimal framework for Salesforce Apex triggers with declarative tri
 
 There are three main blocks of functionality:
 * Trigger handler backbone with event handlers and dispatcher logic.
-* Trigger enablement logic, which allows you to disable the trigger hanler globally or by for a specific event (Optionally).
-* Trigger handler logic management for determining the handlers and order of their execution for specific event (Optionally).
+* Trigger enablement logic, which allows you to disable the trigger hanler globally or by for a specific event (optionally).
+* Trigger handler logic management for determining the handlers and order of their execution for specific event (optionally).
 
 
 ## *TriggerHandler* public API
 #### Properties:
-* `List<SObject> *newList*` - readonly, returns the Trigger.new records.
-* `Map<Id, SObject> *newMap*` - readonly, returns the Trigger.newMap records.
-* `List<SObject> *oldList*` - readonly, returns the Trigger.old records.
-* `Map<Id, SObject> *oldMap*` - readonly, returns the Trigger.oldMap records.
-* `Integer *size*` - readonly, returns the quantity of trigger records.
+* `List<SObject> newList` - readonly, returns the Trigger.new records.
+* `Map<Id, SObject> newMap` - readonly, returns the Trigger.newMap records.
+* `List<SObject> oldList` - readonly, returns the Trigger.old records.
+* `Map<Id, SObject> oldMap` - readonly, returns the Trigger.oldMap records.
+* `Integer size` - readonly, returns the quantity of trigger records.
 
 #### Exceptions
 * `TriggerHandlerException` - will be thrown in the next cases:
@@ -127,7 +127,7 @@ public class AccountTriggerHandlerMethodBeforeInsert implements Callable {
 ... and register it in the Custom metadata by creating the correspondent **Trigger_Handler_Method__mdt** record:
 ![image](https://user-images.githubusercontent.com/23140402/80317415-5a0ce100-880c-11ea-9cdb-7f5c4f6a8239.png)
 
-#### See the detailed example of the usage [here!](https://github.com/AndreyFilonenko/sfdc-declarative-trigger-framework/tree/example-of-usage)
+#### Please see the detailed example of the usage [here!](https://github.com/AndreyFilonenko/sfdc-declarative-trigger-framework/tree/example-of-usage)
 
 ## Change log
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
