@@ -37,8 +37,8 @@ jobs:
     steps:
         - checkout
         - restore_cache:
-          keys: 
-            - sfdx-cli
+            keys: 
+              - sfdx-cli
         - run:
             name: Download CLI
             command: |
@@ -47,9 +47,9 @@ jobs:
                     wget -qO- $DX_CLI_URL | tar xJ -C sfdx --strip-components 1
                 fi
         - save_cache:
-          key: sfdx-cli
-          paths: 
-              - sfdx
+            key: sfdx-cli
+            paths: 
+                - sfdx
         - run:
             name: Install CLI
             command: |
