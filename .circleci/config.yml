@@ -42,7 +42,7 @@ jobs:
         - run:
             name: Download CLI
             command: |
-                if [ ! -d sfdx-cli ]; then
+                if [ ! -d sfdx ]; then
                     mkdir sfdx
                     wget -qO- $DX_CLI_URL | tar xJ -C sfdx --strip-components 1
                 fi
