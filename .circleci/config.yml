@@ -1,6 +1,34 @@
 version: 2
-jobs:
-  build:
+jobs:  
+  static-analysis:
+    docker:
+      - image: circleci/openjdk:latest
+    environment:
+      - PMD_URL: https://github.com/pmd/pmd/releases/download/pmd_releases/6.23.0/pmd-bin-6.23.0.zip
+    steps:
+      - checkout
+      - restore_cache:
+          keys: 
+            - pmd-v6.23.0
+      - run:
+          name: Install PMD
+          command: |
+              if [ ! -d pmd-bin-6.23.0 ]; then
+                  curl -L $PMD_URL -o pmd-bin-6.23.0.zip
+                  unzip pmd-bin-6.23.0.zip
+                  rm pmd-bin-6.23.0.zip
+              fi
+      - save_cache:
+          key: pmd-v6.23.0
+          paths: 
+              - pmd-bin-6.23.0
+      - run: 
+          name: Run Static Analysis
+          command: |
+              pmd-bin-6.23.0/bin/run.sh pmd -d . -R assets/pmd-ruleset.xml -f text -l apex -r static-analysis.txt -cache nonexistingfile.cache
+      - store_artifacts:
+          path: static-analysis.txt
+  unit-tests:
     machine: true
     working_directory: ~/ci_app
     environment:
@@ -61,38 +89,17 @@ jobs:
             path: ~/tests
         - store_test_results:
             path: ~/tests
-  static-analysis:
-    docker:
-      - image: circleci/openjdk:latest
-    steps:
-      - checkout
-      - restore_cache:
-          keys: 
-            - pmd-v6.23.0
-      - run:
-          name: Install PMD
-          command: |
-              if [ ! -d pmd-bin-6.23.0 ]; then
-                  curl -L "https://github.com/pmd/pmd/releases/download/pmd_releases/6.23.0/pmd-bin-6.23.0.zip" -o pmd-bin-6.23.0.zip
-                  unzip pmd-bin-6.23.0.zip
-                  rm pmd-bin-6.23.0.zip
-              fi
-      - save_cache:
-          key: pmd-v6.23.0
-          paths: 
-              - pmd-bin-6.23.0
-      - run: 
-          name: Run Static Analysis
-          command: |
-              pmd-bin-6.23.0/bin/run.sh pmd -d . -R pmd-ruleset.xml -f text -l apex -r static-analysis.txt -cache nonexistingfile.cache -failOnViolation false
-      - store_artifacts:
-          path: static-analysis.txt
 workflows:
   version: 2
   test_and_static:
     jobs:
-      - build:
+      - static-analysis:
           filters:
             branches:
               ignore: example-of-usage
-      - static-analysis
+      - unit-tests:
+          requires:
+            - static-analysis
+          filters:
+            branches:
+              ignore: example-of-usage
