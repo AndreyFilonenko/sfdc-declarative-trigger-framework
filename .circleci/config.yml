@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 jobs:  
   static-analysis:
     docker:
@@ -29,17 +29,27 @@ jobs:
       - store_artifacts:
           path: static-analysis.txt
   unit-tests:
-    machine: true
+    docker:
+      - image: circleci/openjdk:latest
     working_directory: ~/ci_app
     environment:
       - DX_CLI_URL: https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
     steps:
         - checkout
+        - restore_cache:
+          keys: 
+            - sfdx-cli
         - run:
             name: Download CLI
             command: |
-                mkdir sfdx
-                wget -qO- $DX_CLI_URL | tar xJ -C sfdx --strip-components 1
+                if [ ! -d sfdx-cli ]; then
+                    mkdir sfdx
+                    wget -qO- $DX_CLI_URL | tar xJ -C sfdx --strip-components 1
+                fi
+        - save_cache:
+          key: sfdx-cli
+          paths: 
+              - sfdx-cli
         - run:
             name: Install CLI
             command: |
@@ -90,8 +100,8 @@ jobs:
         - store_test_results:
             path: ~/tests
 workflows:
-  version: 2
-  test_and_static:
+  version: 2.1
+  continuous-integration:
     jobs:
       - static-analysis:
           filters:
