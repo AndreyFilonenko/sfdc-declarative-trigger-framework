@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0
+- Migrated repo from MDAPI format to SFDX
+
 ## 1.0.0
 - First release, updated readme and examples of usage
 
